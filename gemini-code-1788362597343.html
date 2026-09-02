@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Открытие Карт — WFC Style</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0d1b2a;
+            color: #1b263b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+
+        /* Баланс WFC */
+        .wallet-container {
+            background: #1e293b;
+            color: #f59e0b;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 16px;
+            border: 2px solid #f59e0b;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        }
+
+        /* Зона шансов */
+        .chances-list {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .chance-item {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: bold;
+            background: #152238;
+            color: #ffffff;
+            border: 1px solid #2e4057;
+        }
+
+        .chance-item.COMMON { border-color: #94a3b8; }
+        .chance-item.RARE { border-color: #1d4ed8; }
+        .chance-item.EPIC { border-color: #b91c1c; }
+        .chance-item.LEGENDARY { border-color: #d97706; }
+
+        /* Зона открытия */
+        .pack-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .card-container {
+            width: 190px;
+            height: 270px;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 14px;
+            cursor: pointer;
+        }
+
+        .card.shake {
+            animation: packShake 0.4s ease-in-out;
+        }
+
+        @keyframes packShake {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.05) rotate(-3deg); }
+            40% { transform: scale(1.05) rotate(3deg); }
+            60% { transform: scale(1.05) rotate(-3deg); }
+            80% { transform: scale(1.05) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg) scale(1.03);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #1e293b;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-back {
+            background: #111827;
+            border-color: #9f1239;
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffffff;
+        }
+
+        .card-back::after {
+            content: "WFC";
+            font-size: 14px;
+            letter-spacing: 3px;
+            color: #9f1239;
+            margin-top: 5px;
+        }
+
+        .card-front {
+            transform: rotateY(180deg);
+            padding: 15px;
+            text-align: center;
+            background: #ffffff;
+        }
+
+        .card-name {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .card-rarity {
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        /* Кнопки */
+        .btn-open, .btn-upgrade {
+            background: #9f1239;
+            color: #ffffff;
+            border: 2px solid #881337;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-open:hover:not(:disabled), .btn-upgrade:hover:not(:disabled) {
+            background: #be123c;
+            transform: translateY(-2px);
+        }
+
+        .btn-open:disabled, .btn-upgrade:disabled {
+            background: #334155;
+            border-color: #475569;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Секция Магазина Прокачки */
+        .shop-section {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 14px;
+            border: 3px solid #1e293b;
+            margin-bottom: 25px;
+        }
+
+        .shop-section h2 {
+            font-size: 18px;
+            color: #0f172a;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+
+        .upgrades-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+        }
+
+        .upgrade-card {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .upgrade-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .upgrade-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Секция Коллекции */
+        .collection-section {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 14px;
+            border: 3px solid #1e293b;
+        }
+
+        .collection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .collection-section h2 {
+            font-size: 20px;
+            color: #0f172a;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .progress-wrapper {
+            margin-bottom: 18px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 100%;
+            background: #e2e8f0;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: #9f1239;
+            transition: width 0.4s ease;
+        }
+
+        .btn-reset {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #64748b;
+            padding: 4px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-reset:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+        }
+
+        .collection-card {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 2px solid #cbd5e1;
+            opacity: 0.35;
+            transition: opacity 0.3s, border-color 0.3s, transform 0.2s;
+        }
+
+        .collection-card.unlocked {
+            opacity: 1;
+            background: #ffffff;
+        }
+
+        .collection-card .name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 8px;
+            color: #0f172a;
+        }
+
+        .collection-card .count {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        /* Стили Редкости */
+        .COMMON { border-color: #64748b; }
+        .COMMON .card-rarity, .chance-item.COMMON { background: #e2e8f0; color: #334155; }
+
+        .RARE { border-color: #1d4ed8; }
+        .RARE .card-rarity, .chance-item.RARE { background: #1d4ed8; color: #ffffff; }
+
+        .EPIC { border-color: #9f1239; }
+        .EPIC .card-rarity, .chance-item.EPIC { background: #9f1239; color: #ffffff; }
+
+        .LEGENDARY { border-color: #d97706; }
+        .LEGENDARY .card-rarity, .chance-item.LEGENDARY { background: #d97706; color: #ffffff; }
+
+        .card-front.COMMON { border-color: #94a3b8; }
+        .card-front.RARE { border-color: #1d4ed8; }
+        .card-front.EPIC { border-color: #9f1239; }
+        .card-front.LEGENDARY { border-color: #d97706; }
+    </style>
+</head>
+<body>
+
+    <h1>Открытие Карт</h1>
+
+    <div class="wallet-container">
+        Баланс: <span id="coinsCount">0</span> WFC
+    </div>
+
+    <div class="chances-list" id="chancesDisplay"></div>
+
+    <div class="pack-section">
+        <div class="card-container">
+            <div class="card" id="mainCard">
+                <div class="card-back">W</div>
+                <div class="card-front" id="cardFront">
+                    <div class="card-name" id="cardName">-</div>
+                    <div class="card-rarity" id="cardRarity">-</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn-open" id="openBtn" onclick="openPack()">Открыть Карту</button>
+    </div>
+
+    <!-- Секция Прокачки -->
+    <div class="shop-section">
+        <h2>Магазин Прокачки</h2>
+        <div class="upgrades-grid">
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Быстрая Перезарядка</div>
+                    <div class="upgrade-desc" id="cdUpgradeDesc">Уменьшает КД открытия карт.</div>
+                </div>
+                <button class="btn-upgrade" id="btnUpgradeCD" onclick="buyCDUpgrade()"></button>
+            </div>
+            <div class="upgrade-card">
+                <div>
+                    <div class="upgrade-title">Удача (+1)</div>
+                    <div class="upgrade-desc">Повышает шанс выпадения RARE, EPIC и LEGENDARY карт.</div>
+                </div>
+                <button class="btn-upgrade" id="btnUpgradeLuck" onclick="buyLuckUpgrade()"></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="collection-section">
+        <div class="collection-header">
+            <h2>Твоя Коллекция</h2>
+            <button class="btn-reset" onclick="resetProgress()">Сбросить прогресс</button>
+        </div>
+        
+        <div class="progress-wrapper">
+            <div class="progress-info">
+                <span>Прогресс сбора:</span>
+                <span id="progressText">0% (0/0)</span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="grid" id="collectionGrid"></div>
+    </div>
+
+    <script>
+        const cardsData = [
+            { name: "Xenedi", rarity: "COMMON" },
+            { name: "DGYJura", rarity: "RARE" },
+            { name: "Zeta", rarity: "RARE" },
+            { name: "Niksi", rarity: "RARE" },
+            { name: "Levante", rarity: "RARE" },
+            { name: "Flou", rarity: "EPIC" },
+            { name: "Morro", rarity: "EPIC" },
+            { name: "Ibra", rarity: "EPIC" },
+            { name: "Dundik", rarity: "LEGENDARY" }
+        ];
+
+        // Загрузка сохраненных данных
+        let collection = JSON.parse(localStorage.getItem('wfc_card_collection')) || {};
+        let coins = parseInt(localStorage.getItem('wfc_coins')) || 0;
+        let cdLevel = parseInt(localStorage.getItem('wfc_cd_level')) || 0; // 0: 5сек, 1: 4сек, 2: 3сек
+        let luckLevel = parseInt(localStorage.getItem('wfc_luck_level')) || 0; // Каждая удача смещает шансы
+
+        cardsData.forEach(card => {
+            if (collection[card.name] === undefined) {
+                collection[card.name] = 0;
+            }
+        });
+
+        function saveData() {
+            localStorage.setItem('wfc_card_collection', JSON.stringify(collection));
+            localStorage.setItem('wfc_coins', coins);
+            localStorage.setItem('wfc_cd_level', cdLevel);
+            localStorage.setItem('wfc_luck_level', luckLevel);
+        }
+
+        function getCooldownTime() {
+            if (cdLevel === 0) return 5;
+            if (cdLevel === 1) return 4;
+            return 3;
+        }
+
+        function getChances() {
+            // Базовые шансы: COMMON: 55, RARE: 30, EPIC: 12, LEGENDARY: 3
+            // Каждая удача забирает 3% у COMMON и распределяет по высшим редкостям
+            let common = Math.max(10, 55 - (luckLevel * 3));
+            let rare = 30 + (luckLevel * 1.5);
+            let epic = 12 + (luckLevel * 1);
+            let legendary = 3 + (luckLevel * 0.5);
+
+            return {
+                COMMON: common,
+                RARE: rare,
+                EPIC: epic,
+                LEGENDARY: legendary
+            };
+        }
+
+        function updateChancesUI() {
+            const chances = getChances();
+            const chancesDiv = document.getElementById('chancesDisplay');
+            chancesDiv.innerHTML = `
+                <div class="chance-item COMMON">COMMON: ${chances.COMMON.toFixed(1)}%</div>
+                <div class="chance-item RARE">RARE: ${chances.RARE.toFixed(1)}%</div>
+                <div class="chance-item EPIC">EPIC: ${chances.EPIC.toFixed(1)}%</div>
+                <div class="chance-item LEGENDARY">LEGENDARY: ${chances.LEGENDARY.toFixed(1)}%</div>
+            `;
+        }
+
+        function updateUI() {
+            document.getElementById('coinsCount').innerText = coins;
+
+            // Кнопка перезарядки
+            const btnCD = document.getElementById('btnUpgradeCD');
+            const descCD = document.getElementById('cdUpgradeDesc');
+            if (cdLevel === 0) {
+                descCD.innerText = "Уменьшить КД с 5 сек до 4 сек";
+                btnCD.innerText = "30 WFC";
+                btnCD.disabled = coins < 30;
+            } else if (cdLevel === 1) {
+                descCD.innerText = "Уменьшить КД с 4 сек до 3 сек";
+                btnCD.innerText = "50 WFC";
+                btnCD.disabled = coins < 50;
+            } else {
+                descCD.innerText = "Максимальный уровень КД (3 сек)";
+                btnCD.innerText = "МАКС.";
+                btnCD.disabled = true;
+            }
+
+            // Кнопка удачи
+            const btnLuck = document.getElementById('btnUpgradeLuck');
+            btnLuck.innerText = "50 WFC";
+            btnLuck.disabled = coins < 50;
+
+            updateChancesUI();
+            updateProgress();
+        }
+
+        function buyCDUpgrade() {
+            if (cdLevel === 0 && coins >= 30) {
+                coins -= 30;
+                cdLevel = 1;
+            } else if (cdLevel === 1 && coins >= 50) {
+                coins -= 50;
+                cdLevel = 2;
+            }
+            saveData();
+            updateUI();
+        }
+
+        function buyLuckUpgrade() {
+            if (coins >= 50) {
+                coins -= 50;
+                luckLevel += 1;
+                saveData();
+                updateUI();
+            }
+        }
+
+        function updateProgress() {
+            const totalCards = cardsData.length;
+            const unlockedCount = cardsData.filter(c => collection[c.name] > 0).length;
+            const percentage = Math.round((unlockedCount / totalCards) * 100);
+
+            document.getElementById('progressText').innerText = `${percentage}% (${unlockedCount}/${totalCards})`;
+            document.getElementById('progressBar').style.width = `${percentage}%`;
+        }
+
+        function initCollection() {
+            const grid = document.getElementById('collectionGrid');
+            grid.innerHTML = '';
+            
+            cardsData.forEach(card => {
+                const item = document.createElement('div');
+                item.className = `collection-card ${card.rarity} ${collection[card.name] > 0 ? 'unlocked' : ''}`;
+                item.id = `col-${card.name}`;
+                item.innerHTML = `
+                    <span class="card-rarity">${card.rarity}</span>
+                    <span class="name">${card.name}</span>
+                    <span class="count" id="count-${card.name}">x${collection[card.name]}</span>
+                `;
+                grid.appendChild(item);
+            });
+
+            updateUI();
+        }
+
+        function getRandomRarity() {
+            const chances = getChances();
+            const rand = Math.random() * 100;
+
+            if (rand < chances.COMMON) return "COMMON";
+            if (rand < chances.COMMON + chances.RARE) return "RARE";
+            if (rand < chances.COMMON + chances.RARE + chances.EPIC) return "EPIC";
+            return "LEGENDARY";
+        }
+
+        let isOpening = false;
+
+        function openPack() {
+            if (isOpening) return;
+            isOpening = true;
+
+            const btn = document.getElementById('openBtn');
+            const card = document.getElementById('mainCard');
+            const cardFront = document.getElementById('cardFront');
+            const cardName = document.getElementById('cardName');
+            const cardRarity = document.getElementById('cardRarity');
+
+            btn.disabled = true;
+
+            if (card.classList.contains('flipped')) {
+                card.classList.remove('flipped');
+                setTimeout(startPackAnimation, 300);
+            } else {
+                startPackAnimation();
+            }
+
+            function startPackAnimation() {
+                card.classList.add('shake');
+                
+                setTimeout(() => {
+                    card.classList.remove('shake');
+                    processDrop();
+                }, 400);
+            }
+
+            function processDrop() {
+                const rolledRarity = getRandomRarity();
+                const availableCards = cardsData.filter(c => c.rarity === rolledRarity);
+                const droppedCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+
+                cardFront.className = `card-front ${droppedCard.rarity}`;
+                cardName.innerText = droppedCard.name;
+                cardRarity.innerText = droppedCard.rarity;
+
+                card.classList.add('flipped');
+
+                // Начисление монеты и карты
+                collection[droppedCard.name]++;
+                coins += 1;
+                
+                saveData();
+                updateCollectionUI(droppedCard.name);
+                updateUI();
+
+                startCooldown(getCooldownTime());
+            }
+        }
+
+        function startCooldown(seconds) {
+            const btn = document.getElementById('openBtn');
+            let timeLeft = seconds;
+
+            btn.disabled = true;
+            btn.innerText = `Подождите (${timeLeft}с)`;
+
+            const timer = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    btn.innerText = `Подождите (${timeLeft}с)`;
+                } else {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.innerText = "Открыть Карту";
+                    isOpening = false;
+                }
+            }, 1000);
+        }
+
+        function updateCollectionUI(name) {
+            const colItem = document.getElementById(`col-${name}`);
+            const countLabel = document.getElementById(`count-${name}`);
+            
+            if (collection[name] > 0) {
+                colItem.classList.add('unlocked');
+            }
+            countLabel.innerText = `x${collection[name]}`;
+        }
+
+        function resetProgress() {
+            if (confirm("Точно сбросить всю коллекцию, баланс и прокачку?")) {
+                cardsData.forEach(card => collection[card.name] = 0);
+                coins = 0;
+                cdLevel = 0;
+                luckLevel = 0;
+                saveData();
+                initCollection();
+            }
+        }
+
+        initCollection();
+    </script>
+</body>
+</html>
