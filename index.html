@@ -30,7 +30,6 @@
             font-weight: 800;
         }
 
-        /* Верхняя панель (Баланс и Кнопка Магазина) */
         .top-bar {
             display: flex;
             gap: 15px;
@@ -67,7 +66,6 @@
             transform: translateY(-2px);
         }
 
-        /* Зона шансов */
         .chances-list {
             display: flex;
             gap: 12px;
@@ -86,12 +84,6 @@
             border: 1px solid #2e4057;
         }
 
-        .chance-item.COMMON { border-color: #94a3b8; }
-        .chance-item.RARE { border-color: #1d4ed8; }
-        .chance-item.EPIC { border-color: #b91c1c; }
-        .chance-item.LEGENDARY { border-color: #d97706; }
-
-        /* Зона открытия */
         .pack-section {
             display: flex;
             flex-direction: column;
@@ -145,6 +137,7 @@
             align-items: center;
             border: 3px solid #1e293b;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
         }
 
         .card-back {
@@ -165,15 +158,26 @@
 
         .card-front {
             transform: rotateY(180deg);
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             background: #ffffff;
         }
 
+        /* Зображення всередині картки */
+        .card-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: none;
+        }
+
         .card-name {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             color: #0f172a;
         }
 
@@ -186,7 +190,6 @@
             letter-spacing: 1px;
         }
 
-        /* Кнопки */
         .btn-open, .btn-upgrade {
             background: #9f1239;
             color: #ffffff;
@@ -214,7 +217,6 @@
             transform: none;
         }
 
-        /* Модальное окно Магазина */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -228,9 +230,7 @@
             z-index: 1000;
         }
 
-        .modal-overlay.active {
-            display: flex;
-        }
+        .modal-overlay.active { display: flex; }
 
         .shop-modal {
             background: #ffffff;
@@ -240,7 +240,6 @@
             border-radius: 14px;
             border: 3px solid #1e293b;
             box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            position: relative;
         }
 
         .shop-modal-header {
@@ -266,10 +265,6 @@
             cursor: pointer;
         }
 
-        .btn-close-modal:hover {
-            color: #0f172a;
-        }
-
         .upgrades-grid {
             display: flex;
             flex-direction: column;
@@ -287,18 +282,9 @@
             gap: 10px;
         }
 
-        .upgrade-title {
-            font-weight: 700;
-            font-size: 14px;
-            color: #0f172a;
-        }
+        .upgrade-title { font-weight: 700; font-size: 14px; color: #0f172a; }
+        .upgrade-desc { font-size: 12px; color: #64748b; }
 
-        .upgrade-desc {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        /* Секция Коллекции */
         .collection-section {
             width: 100%;
             max-width: 800px;
@@ -362,10 +348,7 @@
             cursor: pointer;
         }
 
-        .btn-reset:hover {
-            background: #f1f5f9;
-            color: #0f172a;
-        }
+        .btn-reset:hover { background: #f1f5f9; color: #0f172a; }
 
         .grid {
             display: grid;
@@ -376,13 +359,13 @@
         .collection-card {
             background: #f8fafc;
             border-radius: 10px;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             border: 2px solid #cbd5e1;
             opacity: 0.35;
-            transition: opacity 0.3s, border-color 0.3s, transform 0.2s;
+            transition: opacity 0.3s, border-color 0.3s;
         }
 
         .collection-card.unlocked {
@@ -390,21 +373,31 @@
             background: #ffffff;
         }
 
+        .collection-card .col-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin: 6px 0;
+            display: none;
+        }
+
         .collection-card .name {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
-            margin-top: 8px;
+            margin-top: 4px;
             color: #0f172a;
+            text-align: center;
         }
 
         .collection-card .count {
             font-size: 11px;
             color: #64748b;
-            margin-top: 4px;
+            margin-top: 2px;
             font-weight: 600;
         }
 
-        /* Стили Редкости */
+        /* Стилі Рідкісностей */
         .COMMON { border-color: #64748b; }
         .COMMON .card-rarity, .chance-item.COMMON { background: #e2e8f0; color: #334155; }
 
@@ -417,10 +410,22 @@
         .LEGENDARY { border-color: #d97706; }
         .LEGENDARY .card-rarity, .chance-item.LEGENDARY { background: #d97706; color: #ffffff; }
 
+        .MYTHIC { border-color: #a855f7; }
+        .MYTHIC .card-rarity, .chance-item.MYTHIC { background: #a855f7; color: #ffffff; }
+
+        /* Фоновий дизайн карт для високих рідкісностей */
         .card-front.COMMON { border-color: #94a3b8; }
         .card-front.RARE { border-color: #1d4ed8; }
         .card-front.EPIC { border-color: #9f1239; }
-        .card-front.LEGENDARY { border-color: #d97706; }
+        .card-front.LEGENDARY { 
+            border-color: #d97706; 
+            background: linear-gradient(135deg, #fffbe3 0%, #fef3c7 100%);
+        }
+        .card-front.MYTHIC { 
+            border-color: #a855f7; 
+            background: linear-gradient(135deg, #fae8ff 0%, #f3e8ff 100%);
+            color: #581c87;
+        }
     </style>
 </head>
 <body>
@@ -441,6 +446,7 @@
             <div class="card" id="mainCard">
                 <div class="card-back">W</div>
                 <div class="card-front" id="cardFront">
+                    <img id="cardImage" class="card-img" src="" alt="Card Graphic">
                     <div class="card-name" id="cardName">-</div>
                     <div class="card-rarity" id="cardRarity">-</div>
                 </div>
@@ -449,7 +455,7 @@
         <button class="btn-open" id="openBtn" onclick="openPack()">Открыть Карту</button>
     </div>
 
-    <!-- Модальное окно Магазина -->
+    <!-- Модальне вікно Магазину -->
     <div class="modal-overlay" id="shopModal">
         <div class="shop-modal">
             <div class="shop-modal-header">
@@ -467,7 +473,7 @@
                 <div class="upgrade-card">
                     <div>
                         <div class="upgrade-title">Удача (+1)</div>
-                        <div class="upgrade-desc">Повышает шанс RARE, EPIC и LEGENDARY.</div>
+                        <div class="upgrade-desc">Повышает шанс RARE, EPIC, LEGENDARY и MYTHIC.</div>
                     </div>
                     <button class="btn-upgrade" id="btnUpgradeLuck" onclick="buyLuckUpgrade()"></button>
                 </div>
@@ -495,8 +501,9 @@
     </div>
 
     <script>
+        // Вкажіть тут посилання на свої зображення (URL або шлях до локального файлу, напр. "images/dundik.png")
         const cardsData = [
-            { name: "Xenedi", rarity: "COMMON" },
+            { name: "Henedi", rarity: "COMMON" },
             { name: "DGYJura", rarity: "RARE" },
             { name: "Zeta", rarity: "RARE" },
             { name: "Niksi", rarity: "RARE" },
@@ -504,11 +511,11 @@
             { name: "Flou", rarity: "EPIC" },
             { name: "Morro", rarity: "EPIC" },
             { name: "Ibra", rarity: "EPIC" },
-            { name: "Dundik", rarity: "LEGENDARY" },
-            { name: "Oпера", rarity: "LEGENDARY" }
+            { name: "Dundik", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Dundik" },
+            { name: "Опера", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Opera" },
+            { name: "Dundik Prime", rarity: "MYTHIC", image: "https://https://cdn.discordapp.com/attachments/1105496826527887381/1544746795647631411/IMG_1532.png" }
         ];
 
-        // Загрузка сохраненных данных
         let collection = JSON.parse(localStorage.getItem('wfc_card_collection')) || {};
         let coins = parseInt(localStorage.getItem('wfc_coins')) || 0;
         let cdLevel = parseInt(localStorage.getItem('wfc_cd_level')) || 0;
@@ -543,12 +550,13 @@
         }
 
         function getChances() {
-            let common = Math.max(10, 55 - (luckLevel * 3));
+            let common = Math.max(5, 54 - (luckLevel * 3));
             let rare = 30 + (luckLevel * 1.5);
             let epic = 12 + (luckLevel * 1);
-            let legendary = 3 + (luckLevel * 0.5);
+            let legendary = 3 + (luckLevel * 0.4);
+            let mythic = 1 + (luckLevel * 0.1);
 
-            return { COMMON: common, RARE: rare, EPIC: epic, LEGENDARY: legendary };
+            return { COMMON: common, RARE: rare, EPIC: epic, LEGENDARY: legendary, MYTHIC: mythic };
         }
 
         function updateChancesUI() {
@@ -559,6 +567,7 @@
                 <div class="chance-item RARE">RARE: ${chances.RARE.toFixed(1)}%</div>
                 <div class="chance-item EPIC">EPIC: ${chances.EPIC.toFixed(1)}%</div>
                 <div class="chance-item LEGENDARY">LEGENDARY: ${chances.LEGENDARY.toFixed(1)}%</div>
+                <div class="chance-item MYTHIC">MYTHIC: ${chances.MYTHIC.toFixed(1)}%</div>
             `;
         }
 
@@ -627,8 +636,12 @@
                 const item = document.createElement('div');
                 item.className = `collection-card ${card.rarity} ${collection[card.name] > 0 ? 'unlocked' : ''}`;
                 item.id = `col-${card.name}`;
+                
+                let imgHtml = card.image ? `<img src="${card.image}" class="col-img" style="display:block;">` : '';
+
                 item.innerHTML = `
                     <span class="card-rarity">${card.rarity}</span>
+                    ${imgHtml}
                     <span class="name">${card.name}</span>
                     <span class="count" id="count-${card.name}">x${collection[card.name]}</span>
                 `;
@@ -645,7 +658,8 @@
             if (rand < chances.COMMON) return "COMMON";
             if (rand < chances.COMMON + chances.RARE) return "RARE";
             if (rand < chances.COMMON + chances.RARE + chances.EPIC) return "EPIC";
-            return "LEGENDARY";
+            if (rand < chances.COMMON + chances.RARE + chances.EPIC + chances.LEGENDARY) return "LEGENDARY";
+            return "MYTHIC";
         }
 
         let isOpening = false;
@@ -659,6 +673,7 @@
             const cardFront = document.getElementById('cardFront');
             const cardName = document.getElementById('cardName');
             const cardRarity = document.getElementById('cardRarity');
+            const cardImg = document.getElementById('cardImage');
 
             btn.disabled = true;
 
@@ -686,6 +701,13 @@
                 cardFront.className = `card-front ${droppedCard.rarity}`;
                 cardName.innerText = droppedCard.name;
                 cardRarity.innerText = droppedCard.rarity;
+
+                if (droppedCard.image) {
+                    cardImg.src = droppedCard.image;
+                    cardImg.style.display = "block";
+                } else {
+                    cardImg.style.display = "none";
+                }
 
                 card.classList.add('flipped');
 
