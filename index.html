@@ -455,7 +455,6 @@
         <button class="btn-open" id="openBtn" onclick="openPack()">Открыть Карту</button>
     </div>
 
-    <!-- Модальне вікно Магазину -->
     <div class="modal-overlay" id="shopModal">
         <div class="shop-modal">
             <div class="shop-modal-header">
@@ -476,6 +475,13 @@
                         <div class="upgrade-desc">Повышает шанс RARE, EPIC, LEGENDARY и MYTHIC.</div>
                     </div>
                     <button class="btn-upgrade" id="btnUpgradeLuck" onclick="buyLuckUpgrade()"></button>
+                </div>
+                <div class="upgrade-card">
+                    <div>
+                        <div class="upgrade-title">Множитель Монет (x2)</div>
+                        <div class="upgrade-desc" id="coinMultDesc">Удваивает получаемные монеты за карты.</div>
+                    </div>
+                    <button class="btn-upgrade" id="btnUpgradeCoinMult" onclick="buyCoinMultiplier()"></button>
                 </div>
             </div>
         </div>
@@ -501,7 +507,6 @@
     </div>
 
     <script>
-        // Вкажіть тут посилання на свої зображення (URL або шлях до локального файлу, напр. "images/dundik.png")
         const cardsData = [
             { name: "Henedi", rarity: "COMMON" },
             { name: "DGYJura", rarity: "RARE" },
@@ -516,10 +521,20 @@
             { name: "Dundik Prime", rarity: "MYTHIC", image: "dundik_prime.png" }
         ];
 
+        // Нагороди за рідкість
+        const rarityRewards = {
+            COMMON: 1,
+            RARE: 2,
+            EPIC: 3,
+            LEGENDARY: 5,
+            MYTHIC: 8
+        };
+
         let collection = JSON.parse(localStorage.getItem('wfc_card_collection')) || {};
         let coins = parseInt(localStorage.getItem('wfc_coins')) || 0;
         let cdLevel = parseInt(localStorage.getItem('wfc_cd_level')) || 0;
         let luckLevel = parseInt(localStorage.getItem('wfc_luck_level')) || 0;
+        let hasCoinMult = JSON.parse(localStorage.getItem('wfc_coin_mult')) || false;
 
         cardsData.forEach(card => {
             if (collection[card.name] === undefined) {
@@ -532,6 +547,7 @@
             localStorage.setItem('wfc_coins', coins);
             localStorage.setItem('wfc_cd_level', cdLevel);
             localStorage.setItem('wfc_luck_level', luckLevel);
+            localStorage.setItem('wfc_coin_mult', JSON.stringify(hasCoinMult));
         }
 
         function toggleShop(show) {
@@ -594,6 +610,18 @@
             btnLuck.innerText = "50 WFC";
             btnLuck.disabled = coins < 50;
 
+            const btnCoinMult = document.getElementById('btnUpgradeCoinMult');
+            const descCoinMult = document.getElementById('coinMultDesc');
+            if (hasCoinMult) {
+                descCoinMult.innerText = "Множитель х2 уже куплен!";
+                btnCoinMult.innerText = "КУПЛЕНО";
+                btnCoinMult.disabled = true;
+            } else {
+                descCoinMult.innerText = "Удваивает получаемые монеты за карты.";
+                btnCoinMult.innerText = "100 WFC";
+                btnCoinMult.disabled = coins < 100;
+            }
+
             updateChancesUI();
             updateProgress();
         }
@@ -614,6 +642,15 @@
             if (coins >= 50) {
                 coins -= 50;
                 luckLevel += 1;
+                saveData();
+                updateUI();
+            }
+        }
+
+        function buyCoinMultiplier() {
+            if (!hasCoinMult && coins >= 100) {
+                coins -= 100;
+                hasCoinMult = true;
                 saveData();
                 updateUI();
             }
@@ -712,7 +749,11 @@
                 card.classList.add('flipped');
 
                 collection[droppedCard.name]++;
-                coins += 1;
+
+                // Розрахунок нагороди залежно від рідкісності та наявності множника
+                let baseReward = rarityRewards[droppedCard.rarity] || 1;
+                let multiplier = hasCoinMult ? 2 : 1;
+                coins += baseReward * multiplier;
                 
                 saveData();
                 updateCollectionUI(droppedCard.name);
@@ -758,6 +799,7 @@
                 coins = 0;
                 cdLevel = 0;
                 luckLevel = 0;
+                hasCoinMult = false;
                 saveData();
                 initCollection();
             }
