@@ -37,23 +37,24 @@
             margin-bottom: 20px;
         }
 
+        /* === Квадратний баланс: білий фон, червона обводка === */
         .wallet-container {
-            background: #1e293b;
-            color: #f59e0b;
+            background: #ffffff;
+            color: #9f1239;
             padding: 8px 18px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-weight: 800;
             font-size: 16px;
-            border: 2px solid #f59e0b;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+            border: 2px solid #9f1239;
         }
 
+        /* === Квадратна кнопка магазину: білий фон, червона обводка, без смайлика === */
         .btn-shop-open {
-            background: #f59e0b;
-            color: #0d1b2a;
-            border: none;
+            background: #ffffff;
+            color: #9f1239;
+            border: 2px solid #9f1239;
             padding: 8px 18px;
-            border-radius: 20px;
+            border-radius: 8px;
             font-weight: 800;
             font-size: 15px;
             cursor: pointer;
@@ -62,7 +63,7 @@
         }
 
         .btn-shop-open:hover {
-            background: #d97706;
+            background: #fee2e2;
             transform: translateY(-2px);
         }
 
@@ -163,7 +164,6 @@
             background: #ffffff;
         }
 
-        /* Зображення всередині картки */
         .card-img {
             width: 100px;
             height: 100px;
@@ -292,6 +292,7 @@
             padding: 24px;
             border-radius: 14px;
             border: 3px solid #1e293b;
+            margin-bottom: 20px;
         }
 
         .collection-header {
@@ -397,6 +398,14 @@
             font-weight: 600;
         }
 
+        /* Нагорода за картку у колекції */
+        .collection-card .reward {
+            font-size: 11px;
+            color: #15803d;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
         /* Стилі Рідкісностей */
         .COMMON { border-color: #64748b; }
         .COMMON .card-rarity, .chance-item.COMMON { background: #e2e8f0; color: #334155; }
@@ -413,18 +422,55 @@
         .MYTHIC { border-color: #a855f7; }
         .MYTHIC .card-rarity, .chance-item.MYTHIC { background: #a855f7; color: #ffffff; }
 
-        /* Фоновий дизайн карт для високих рідкісностей */
         .card-front.COMMON { border-color: #94a3b8; }
         .card-front.RARE { border-color: #1d4ed8; }
         .card-front.EPIC { border-color: #9f1239; }
-        .card-front.LEGENDARY { 
-            border-color: #d97706; 
+        .card-front.LEGENDARY {
+            border-color: #d97706;
             background: linear-gradient(135deg, #fffbe3 0%, #fef3c7 100%);
         }
-        .card-front.MYTHIC { 
-            border-color: #a855f7; 
+        .card-front.MYTHIC {
+            border-color: #a855f7;
             background: linear-gradient(135deg, #fae8ff 0%, #f3e8ff 100%);
             color: #581c87;
+        }
+
+        /* === Лідерборд === */
+        .leaderboard-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .leaderboard-controls input {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .leaderboard-row:nth-child(1) { color: #d97706; }
+        .leaderboard-row:nth-child(2) { color: #64748b; }
+        .leaderboard-row:nth-child(3) { color: #9f1239; }
+
+        .leaderboard-status {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 8px;
         }
     </style>
 </head>
@@ -436,7 +482,7 @@
         <div class="wallet-container">
             Баланс: <span id="coinsCount">0</span> WFC
         </div>
-        <button class="btn-shop-open" onclick="toggleShop(true)">Магазин 🛒</button>
+        <button class="btn-shop-open" onclick="toggleShop(true)">Магазин</button>
     </div>
 
     <div class="chances-list" id="chancesDisplay"></div>
@@ -472,7 +518,7 @@
                 <div class="upgrade-card">
                     <div>
                         <div class="upgrade-title">Удача (+1)</div>
-                        <div class="upgrade-desc">Повышает шанс RARE, EPIC, LEGENDARY и MYTHIC.</div>
+                        <div class="upgrade-desc" id="luckUpgradeDesc">Повышает шанс EPIC, LEGENDARY и MYTHIC, снижает COMMON.</div>
                     </div>
                     <button class="btn-upgrade" id="btnUpgradeLuck" onclick="buyLuckUpgrade()"></button>
                 </div>
@@ -492,7 +538,7 @@
             <h2>Твоя Коллекция</h2>
             <button class="btn-reset" onclick="resetProgress()">Сбросить прогресс</button>
         </div>
-        
+
         <div class="progress-wrapper">
             <div class="progress-info">
                 <span>Прогресс сбора:</span>
@@ -504,6 +550,18 @@
         </div>
 
         <div class="grid" id="collectionGrid"></div>
+    </div>
+
+    <div class="collection-section">
+        <div class="collection-header">
+            <h2>Лидерборд</h2>
+        </div>
+        <div class="leaderboard-controls">
+            <input type="text" id="playerNameInput" placeholder="Твой ник..." maxlength="20">
+            <button class="btn-upgrade" onclick="changePlayerName()">Сохранить ник</button>
+        </div>
+        <div id="leaderboardList"></div>
+        <div class="leaderboard-status" id="leaderboardStatus">Загрузка лидерборда...</div>
     </div>
 
     <script>
@@ -518,6 +576,7 @@
             { name: "Ibra", rarity: "EPIC" },
             { name: "Dundik", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Dundik" },
             { name: "Опера", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Opera" },
+            { name: "Zeta Prime", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Zeta+Prime" },
             { name: "Dundik Prime", rarity: "MYTHIC", image: "dundik_prime.png" }
         ];
 
@@ -530,11 +589,17 @@
             MYTHIC: 8
         };
 
+        const MAX_LUCK_PURCHASES = 5;
+        const LUCK_PRICE = 50;
+
         let collection = JSON.parse(localStorage.getItem('wfc_card_collection')) || {};
         let coins = parseInt(localStorage.getItem('wfc_coins')) || 0;
         let cdLevel = parseInt(localStorage.getItem('wfc_cd_level')) || 0;
         let luckLevel = parseInt(localStorage.getItem('wfc_luck_level')) || 0;
+        let luckPurchases = parseInt(localStorage.getItem('wfc_luck_purchases')) || 0;
         let hasCoinMult = JSON.parse(localStorage.getItem('wfc_coin_mult')) || false;
+        let totalOpened = parseInt(localStorage.getItem('wfc_total_opened')) || 0;
+        let playerName = localStorage.getItem('wfc_player_name') || '';
 
         cardsData.forEach(card => {
             if (collection[card.name] === undefined) {
@@ -547,7 +612,9 @@
             localStorage.setItem('wfc_coins', coins);
             localStorage.setItem('wfc_cd_level', cdLevel);
             localStorage.setItem('wfc_luck_level', luckLevel);
+            localStorage.setItem('wfc_luck_purchases', luckPurchases);
             localStorage.setItem('wfc_coin_mult', JSON.stringify(hasCoinMult));
+            localStorage.setItem('wfc_total_opened', totalOpened);
         }
 
         function toggleShop(show) {
@@ -565,12 +632,14 @@
             return 3;
         }
 
+        // === Шанси: COMMON падає з удачею, RARE фіксований,
+        // EPIC/LEGENDARY/MYTHIC ростуть з удачею ===
         function getChances() {
             let common = Math.max(5, 54 - (luckLevel * 3));
-            let rare = 30 + (luckLevel * 1.5);
-            let epic = 12 + (luckLevel * 1);
-            let legendary = 3 + (luckLevel * 0.4);
-            let mythic = 1 + (luckLevel * 0.1);
+            let rare = 30; // не залежить від удачі
+            let epic = 12 + (luckLevel * 2);
+            let legendary = 3 + (luckLevel * 0.7);
+            let mythic = 1 + (luckLevel * 0.3);
 
             return { COMMON: common, RARE: rare, EPIC: epic, LEGENDARY: legendary, MYTHIC: mythic };
         }
@@ -607,8 +676,16 @@
             }
 
             const btnLuck = document.getElementById('btnUpgradeLuck');
-            btnLuck.innerText = "50 WFC";
-            btnLuck.disabled = coins < 50;
+            const descLuck = document.getElementById('luckUpgradeDesc');
+            if (luckPurchases >= MAX_LUCK_PURCHASES) {
+                descLuck.innerText = `Максимум куплено (${MAX_LUCK_PURCHASES}/${MAX_LUCK_PURCHASES})`;
+                btnLuck.innerText = "МАКС.";
+                btnLuck.disabled = true;
+            } else {
+                descLuck.innerText = `Повышает EPIC/LEGENDARY/MYTHIC, снижает COMMON. Куплено: ${luckPurchases}/${MAX_LUCK_PURCHASES}`;
+                btnLuck.innerText = `${LUCK_PRICE} WFC`;
+                btnLuck.disabled = coins < LUCK_PRICE;
+            }
 
             const btnCoinMult = document.getElementById('btnUpgradeCoinMult');
             const descCoinMult = document.getElementById('coinMultDesc');
@@ -624,6 +701,7 @@
 
             updateChancesUI();
             updateProgress();
+            updateRewardsUI();
         }
 
         function buyCDUpgrade() {
@@ -639,9 +717,11 @@
         }
 
         function buyLuckUpgrade() {
-            if (coins >= 50) {
-                coins -= 50;
+            if (luckPurchases >= MAX_LUCK_PURCHASES) return;
+            if (coins >= LUCK_PRICE) {
+                coins -= LUCK_PRICE;
                 luckLevel += 1;
+                luckPurchases += 1;
                 saveData();
                 updateUI();
             }
@@ -665,22 +745,37 @@
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }
 
+        // Оновлює написи "+X WFC" під кожною карткою (враховує множник монет)
+        function updateRewardsUI() {
+            const multiplier = hasCoinMult ? 2 : 1;
+            cardsData.forEach(card => {
+                const el = document.getElementById(`reward-${card.name}`);
+                if (el) {
+                    const reward = (rarityRewards[card.rarity] || 1) * multiplier;
+                    el.innerText = `+${reward} WFC`;
+                }
+            });
+        }
+
         function initCollection() {
             const grid = document.getElementById('collectionGrid');
             grid.innerHTML = '';
-            
+
             cardsData.forEach(card => {
                 const item = document.createElement('div');
                 item.className = `collection-card ${card.rarity} ${collection[card.name] > 0 ? 'unlocked' : ''}`;
                 item.id = `col-${card.name}`;
-                
+
                 let imgHtml = card.image ? `<img src="${card.image}" class="col-img" style="display:block;">` : '';
+                const multiplier = hasCoinMult ? 2 : 1;
+                const reward = (rarityRewards[card.rarity] || 1) * multiplier;
 
                 item.innerHTML = `
                     <span class="card-rarity">${card.rarity}</span>
                     ${imgHtml}
                     <span class="name">${card.name}</span>
                     <span class="count" id="count-${card.name}">x${collection[card.name]}</span>
+                    <span class="reward" id="reward-${card.name}">+${reward} WFC</span>
                 `;
                 grid.appendChild(item);
             });
@@ -723,7 +818,7 @@
 
             function startPackAnimation() {
                 card.classList.add('shake');
-                
+
                 setTimeout(() => {
                     card.classList.remove('shake');
                     processDrop();
@@ -749,15 +844,16 @@
                 card.classList.add('flipped');
 
                 collection[droppedCard.name]++;
+                totalOpened++;
 
-                // Розрахунок нагороди залежно від рідкісності та наявності множника
                 let baseReward = rarityRewards[droppedCard.rarity] || 1;
                 let multiplier = hasCoinMult ? 2 : 1;
                 coins += baseReward * multiplier;
-                
+
                 saveData();
                 updateCollectionUI(droppedCard.name);
                 updateUI();
+                submitScore();
 
                 startCooldown(getCooldownTime());
             }
@@ -786,7 +882,7 @@
         function updateCollectionUI(name) {
             const colItem = document.getElementById(`col-${name}`);
             const countLabel = document.getElementById(`count-${name}`);
-            
+
             if (collection[name] > 0) {
                 colItem.classList.add('unlocked');
             }
@@ -799,13 +895,130 @@
                 coins = 0;
                 cdLevel = 0;
                 luckLevel = 0;
+                luckPurchases = 0;
                 hasCoinMult = false;
+                totalOpened = 0;
                 saveData();
                 initCollection();
             }
         }
 
+        /* ==========================================================
+           ЛІДЕРБОРД ЧЕРЕЗ GITHUB GIST
+           ==========================================================
+           ⚠️ ВАЖЛИВО ПРО БЕЗПЕКУ:
+           Токен нижче буде видно будь-кому у вихідному коді сторінки
+           (DevTools -> Sources). Це означає, що зловмисник може
+           використати його, щоб стерти або зіпсувати лідерборд, а
+           якщо у токена ширші права — нашкодити й іншим вашим репо/гістам.
+
+           Як зробити безпечно:
+           1) Заведіть ОКРЕМИЙ GitHub-акаунт тільки для гри.
+           2) Створіть Personal Access Token (Settings -> Developer
+              settings -> Tokens) з ЄДИНИМ правом "gist".
+           3) Створіть публічний Gist з одним файлом leaderboard.json
+              і вмістом {}
+           4) Встав ID токена й гіста нижче.
+
+           Якщо гра буде публічною і важлива реальна безпека — краще
+           зробити маленький проксі-сервер (наприклад, Cloudflare
+           Worker чи Vercel Function), який зберігає токен на бекенді
+           і приймає лише POST { name, score } від гри. Тоді токен
+           ніколи не потрапляє у браузер користувача.
+           ========================================================== */
+
+        const GITHUB_TOKEN = "ВСТАВ_СЮДИ_СВІЙ_ТОКЕН"; // токен з правом "gist"
+        const GIST_ID = "ВСТАВ_СЮДИ_ID_ГІСТА";
+        const LEADERBOARD_FILE = "leaderboard.json";
+        const LEADERBOARD_ENABLED = GITHUB_TOKEN !== "ВСТАВ_СЮДИ_СВІЙ_ТОКЕН" && GIST_ID !== "ВСТАВ_СЮДИ_ID_ГІСТА";
+
+        function setLeaderboardStatus(text) {
+            const el = document.getElementById('leaderboardStatus');
+            if (el) el.innerText = text;
+        }
+
+        function changePlayerName() {
+            const input = document.getElementById('playerNameInput');
+            const name = input.value.trim();
+            if (!name) return;
+            playerName = name;
+            localStorage.setItem('wfc_player_name', playerName);
+            submitScore();
+        }
+
+        async function fetchLeaderboard() {
+            const res = await fetch(`https://api.github.com/gists/${GIST_ID}`);
+            if (!res.ok) throw new Error('Не вдалося завантажити гіст');
+            const data = await res.json();
+            const file = data.files[LEADERBOARD_FILE];
+            if (!file) throw new Error(`У гісті немає файлу ${LEADERBOARD_FILE}`);
+            return JSON.parse(file.content || '{}');
+        }
+
+        async function renderLeaderboard(leaderboard) {
+            const list = document.getElementById('leaderboardList');
+            const sorted = Object.entries(leaderboard)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            if (sorted.length === 0) {
+                list.innerHTML = '<div class="leaderboard-row"><span>Пока пусто</span><span></span></div>';
+                return;
+            }
+
+            list.innerHTML = sorted.map(([name, count], i) =>
+                `<div class="leaderboard-row"><span>#${i + 1} ${name}</span><span>${count} карт</span></div>`
+            ).join('');
+        }
+
+        async function loadLeaderboard() {
+            if (!LEADERBOARD_ENABLED) {
+                setLeaderboardStatus('Лидерборд не настроен: добавь GITHUB_TOKEN и GIST_ID в коде.');
+                return;
+            }
+            try {
+                const leaderboard = await fetchLeaderboard();
+                await renderLeaderboard(leaderboard);
+                setLeaderboardStatus('Обновлено только что.');
+            } catch (e) {
+                console.error(e);
+                setLeaderboardStatus('Не удалось загрузить лидерборд.');
+            }
+        }
+
+        async function submitScore() {
+            if (!LEADERBOARD_ENABLED || !playerName) return;
+            try {
+                const leaderboard = await fetchLeaderboard();
+                if (!leaderboard[playerName] || leaderboard[playerName] < totalOpened) {
+                    leaderboard[playerName] = totalOpened;
+                }
+                await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        files: {
+                            [LEADERBOARD_FILE]: {
+                                content: JSON.stringify(leaderboard, null, 2)
+                            }
+                        }
+                    })
+                });
+                await renderLeaderboard(leaderboard);
+                setLeaderboardStatus('Обновлено только что.');
+            } catch (e) {
+                console.error(e);
+                setLeaderboardStatus('Не удалось обновить лидерборд.');
+            }
+        }
+
+        // Ініціалізація
         initCollection();
+        document.getElementById('playerNameInput').value = playerName;
+        loadLeaderboard();
     </script>
 </body>
 </html>
