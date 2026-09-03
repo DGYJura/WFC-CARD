@@ -192,6 +192,13 @@
             letter-spacing: 1px;
         }
 
+        .card-club {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
         .btn-open, .btn-upgrade {
             background: #9f1239;
             color: #ffffff;
@@ -380,11 +387,24 @@
         }
 
         .btn-reset:hover { background: #f1f5f9; color: #0f172a; }
+        .btn-reset:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
             gap: 15px;
+        }
+
+        /* === Пагінація колекції === */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
         }
 
         .collection-card {
@@ -418,6 +438,14 @@
             font-weight: 700;
             margin-top: 4px;
             color: #0f172a;
+            text-align: center;
+        }
+
+        .collection-card .club {
+            font-size: 10px;
+            color: #94a3b8;
+            font-style: italic;
+            margin-top: 2px;
             text-align: center;
         }
 
@@ -525,6 +553,7 @@
                     <img id="cardImage" class="card-img" src="" alt="Card Graphic">
                     <div class="card-name" id="cardName">-</div>
                     <div class="card-rarity" id="cardRarity">-</div>
+                    <div class="card-club" id="cardClub">-</div>
                 </div>
             </div>
         </div>
@@ -588,6 +617,12 @@
         </div>
 
         <div class="grid" id="collectionGrid"></div>
+
+        <div class="pagination">
+            <button class="btn-reset" id="prevPageBtn" onclick="changeCollectionPage(-1)">← Назад</button>
+            <span id="pageIndicator">Сторінка 1 з 1</span>
+            <button class="btn-reset" id="nextPageBtn" onclick="changeCollectionPage(1)">Вперед →</button>
+        </div>
     </div>
 
     <div class="collection-section">
@@ -602,21 +637,59 @@
         <div class="leaderboard-status" id="leaderboardStatus">Загрузка лидерборда...</div>
     </div>
 
+    <!-- Firebase (та ж база, що і на сайті з таблицею команд) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
+        // ВСТАВТЕ СЮДИ ТОЙ ЖЕ FIREBASE CONFIG, ЩО В index.html / admin.html
+        // (щоб лідерборд, таблиця команд і картки жили в одній базі)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
+            appId: "YOUR_APP_ID"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ===== Картки та клуби =====
         const cardsData = [
-            { name: "Henedi", rarity: "COMMON" },
-            { name: "DGYJura", rarity: "RARE" },
-            { name: "Zeta", rarity: "RARE" },
-            { name: "Niksi", rarity: "RARE" },
-            { name: "Levante", rarity: "RARE" },
-            { name: "Flou", rarity: "EPIC" },
-            { name: "Morro", rarity: "EPIC" },
-            { name: "Ibra", rarity: "EPIC" },
-            { name: "Dundik", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Dundik" },
-            { name: "Опера", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Opera" },
-            { name: "Zeta Prime", rarity: "LEGENDARY", image: "https://via.placeholder.com/100/d97706/ffffff?text=Zeta+Prime" },
-            { name: "Dundik Prime", rarity: "MYTHIC", image: "dundik_prime.png" },
-            { name: "Опера Prime", rarity: "MYTHIC", image: "opera_prime.png" }
+            // Клуб Busrid (основний склад)
+            { name: "Henedi", rarity: "COMMON", club: "Busrid" },
+            { name: "DGYJura", rarity: "RARE", club: "Busrid" },
+            { name: "Zeta", rarity: "RARE", club: "Busrid" },
+            { name: "Niksi", rarity: "RARE", club: "Busrid" },
+            { name: "Levante", rarity: "RARE", club: "Busrid" },
+            { name: "Flou", rarity: "EPIC", club: "Busrid" },
+            { name: "Morro", rarity: "EPIC", club: "Busrid" },
+            { name: "Ibra", rarity: "EPIC", club: "Busrid" },
+            { name: "Dundik", rarity: "LEGENDARY", club: "Busrid", image: "https://via.placeholder.com/100/d97706/ffffff?text=Dundik" },
+            { name: "Опера", rarity: "LEGENDARY", club: "Busrid", image: "https://via.placeholder.com/100/d97706/ffffff?text=Opera" },
+            { name: "Zeta Prime", rarity: "LEGENDARY", club: "Busrid", image: "https://via.placeholder.com/100/d97706/ffffff?text=Zeta+Prime" },
+            { name: "Dundik Prime", rarity: "MYTHIC", club: "Busrid", image: "dundik_prime.png" },
+            { name: "Опера Prime", rarity: "MYTHIC", club: "Busrid", image: "opera_prime.png" },
+
+            // Клуб Phantom Reapers
+            { name: "Dibala", rarity: "EPIC", club: "Phantom Reapers" },
+            { name: "MrCourto1s", rarity: "RARE", club: "Phantom Reapers" },
+            { name: "IceWing", rarity: "COMMON", club: "Phantom Reapers" },
+
+            // Клуб Mirandes
+            { name: "ded.nisa1de", rarity: "EPIC", club: "Mirandes" },
+            { name: "anc.robertik", rarity: "RARE", club: "Mirandes" },
+
+            // Клуб Astralis
+            { name: "Прайм Туріст", rarity: "EPIC", club: "Astralis" },
+
+            // Клуб Virtus Pro
+            { name: "Canqt", rarity: "LEGENDARY", club: "Virtus Pro", image: "https://via.placeholder.com/100/d97706/ffffff?text=Canqt" },
+
+            // Клуб Bristol Rovers
+            { name: "Norwly", rarity: "LEGENDARY", club: "Bristol Rovers", image: "https://via.placeholder.com/100/d97706/ffffff?text=Norwly" }
         ];
 
         // Нагороди за рідкість
@@ -631,6 +704,7 @@
         const MAX_LUCK_PURCHASES = 5;
         const LUCK_PRICE = 50;
         const JUNK_DROP_PRICE = 40;
+        const CARDS_PER_PAGE = 8;
 
         let collection = JSON.parse(localStorage.getItem('wfc_card_collection')) || {};
         let coins = parseInt(localStorage.getItem('wfc_coins')) || 0;
@@ -641,6 +715,7 @@
         let hasJunkDrop = JSON.parse(localStorage.getItem('wfc_junk_drop')) || false;
         let totalOpened = parseInt(localStorage.getItem('wfc_total_opened')) || 0;
         let playerName = localStorage.getItem('wfc_player_name') || '';
+        let currentCollectionPage = 1;
 
         cardsData.forEach(card => {
             if (collection[card.name] === undefined) {
@@ -822,11 +897,25 @@
             });
         }
 
-        function initCollection() {
+        // ===== Пагінація колекції =====
+        function getTotalPages() {
+            return Math.ceil(cardsData.length / CARDS_PER_PAGE) || 1;
+        }
+
+        function renderCollectionPage(page) {
+            const totalPages = getTotalPages();
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+            currentCollectionPage = page;
+
             const grid = document.getElementById('collectionGrid');
             grid.innerHTML = '';
 
-            cardsData.forEach(card => {
+            const startIdx = (page - 1) * CARDS_PER_PAGE;
+            const endIdx = Math.min(startIdx + CARDS_PER_PAGE, cardsData.length);
+            const pageCards = cardsData.slice(startIdx, endIdx);
+
+            pageCards.forEach(card => {
                 const item = document.createElement('div');
                 item.className = `collection-card ${card.rarity} ${collection[card.name] > 0 ? 'unlocked' : ''}`;
                 item.id = `col-${card.name}`;
@@ -839,12 +928,24 @@
                     <span class="card-rarity">${card.rarity}</span>
                     ${imgHtml}
                     <span class="name">${card.name}</span>
+                    <span class="club">${card.club}</span>
                     <span class="count" id="count-${card.name}">x${collection[card.name]}</span>
                     <span class="reward" id="reward-${card.name}">+${reward} WFC</span>
                 `;
                 grid.appendChild(item);
             });
 
+            document.getElementById('pageIndicator').innerText = `Сторінка ${page} з ${totalPages}`;
+            document.getElementById('prevPageBtn').disabled = page <= 1;
+            document.getElementById('nextPageBtn').disabled = page >= totalPages;
+        }
+
+        function changeCollectionPage(delta) {
+            renderCollectionPage(currentCollectionPage + delta);
+        }
+
+        function initCollection() {
+            renderCollectionPage(1);
             updateUI();
         }
 
@@ -870,6 +971,7 @@
             const cardFront = document.getElementById('cardFront');
             const cardName = document.getElementById('cardName');
             const cardRarity = document.getElementById('cardRarity');
+            const cardClub = document.getElementById('cardClub');
             const cardImg = document.getElementById('cardImage');
 
             btn.disabled = true;
@@ -898,6 +1000,7 @@
                 cardFront.className = `card-front ${droppedCard.rarity}`;
                 cardName.innerText = droppedCard.name;
                 cardRarity.innerText = droppedCard.rarity;
+                cardClub.innerText = "Клуб: " + droppedCard.club;
 
                 if (droppedCard.image) {
                     cardImg.src = droppedCard.image;
@@ -918,7 +1021,7 @@
                 saveData();
                 updateCollectionUI(droppedCard.name);
                 updateUI();
-                submitScore();
+                pushScoreToLeaderboard();
 
                 startCooldown(getCooldownTime());
             }
@@ -944,14 +1047,17 @@
             }, 1000);
         }
 
+        // Оновлює клітинку колекції, лише якщо вона зараз відображена на поточній сторінці
         function updateCollectionUI(name) {
             const colItem = document.getElementById(`col-${name}`);
             const countLabel = document.getElementById(`count-${name}`);
 
-            if (collection[name] > 0) {
+            if (colItem && collection[name] > 0) {
                 colItem.classList.add('unlocked');
             }
-            countLabel.innerText = `x${collection[name]}`;
+            if (countLabel) {
+                countLabel.innerText = `x${collection[name]}`;
+            }
         }
 
         function resetProgress() {
@@ -965,7 +1071,9 @@
                 hasJunkDrop = false;
                 totalOpened = 0;
                 saveData();
-                initCollection();
+                renderCollectionPage(1);
+                updateUI();
+                pushScoreToLeaderboard();
             }
         }
 
@@ -979,25 +1087,20 @@
         }, 10000);
 
         /* ==========================================================
-           ЛІДЕРБОРД ЧЕРЕЗ GITHUB GIST
+           ЛІДЕРБОРД ЧЕРЕЗ FIREBASE (без токенів і посилань)
            ==========================================================
-           ⚠️ ВАЖЛИВО ПРО БЕЗПЕКУ:
-           Токен нижче буде видно будь-кому у вихідному коді сторінки
-           (DevTools -> Sources). Це означає, що зловмисник може
-           використати його, щоб стерти або зіпсувати лідерборд, а
-           якщо у токена ширші права — нашкодити й іншим вашим репо/гістам.
+           Результати зберігаються у вузлі 'cardGameLeaderboard' тієї ж
+           бази Firebase, що і таблиця команд. Кожен клієнт підписаний
+           на .on('value', ...) — тому щойно хтось відкриває пак, це
+           одразу видно всім, хто відкрив сторінку, без перезавантаження.
 
-           Як зробити безпечно (детальні кроки — у чаті):
-           1) Заведіть ОКРЕМИЙ GitHub-акаунт тільки для гри.
-           2) Створіть Personal Access Token з ЄДИНИМ правом "gist".
-           3) Створіть публічний Gist з файлом leaderboard.json і {}.
-           4) Встав ID токена й гіста нижче.
+           Firebase Realtime Database не дозволяє символи . # $ [ ] у
+           ключах, тому нікнейм санітизується перед записом.
            ========================================================== */
 
-        const GITHUB_TOKEN = "ВСТАВ_СЮДИ_СВІЙ_ТОКЕН"; // токен з правом "gist"
-        const GIST_ID = "ВСТАВ_СЮДИ_ID_ГІСТА";
-        const LEADERBOARD_FILE = "leaderboard.json";
-        const LEADERBOARD_ENABLED = GITHUB_TOKEN !== "ВСТАВ_СЮДИ_СВІЙ_ТОКЕН" && GIST_ID !== "ВСТАВ_СЮДИ_ID_ГІСТА";
+        function sanitizeKey(name) {
+            return name.replace(/[.#$\[\]]/g, '_').trim();
+        }
 
         function setLeaderboardStatus(text) {
             const el = document.getElementById('leaderboardStatus');
@@ -1010,22 +1113,27 @@
             if (!name) return;
             playerName = name;
             localStorage.setItem('wfc_player_name', playerName);
-            submitScore();
+            pushScoreToLeaderboard();
         }
 
-        async function fetchLeaderboard() {
-            const res = await fetch(`https://api.github.com/gists/${GIST_ID}`);
-            if (!res.ok) throw new Error('Не вдалося завантажити гіст');
-            const data = await res.json();
-            const file = data.files[LEADERBOARD_FILE];
-            if (!file) throw new Error(`У гісті немає файлу ${LEADERBOARD_FILE}`);
-            return JSON.parse(file.content || '{}');
+        function pushScoreToLeaderboard() {
+            if (!playerName) return;
+            const key = sanitizeKey(playerName);
+            if (!key) return;
+            database.ref('cardGameLeaderboard/' + key).set({
+                name: playerName,
+                count: totalOpened
+            }).catch(err => {
+                console.error(err);
+                setLeaderboardStatus('Не вдалося оновити лідерборд.');
+            });
         }
 
-        async function renderLeaderboard(leaderboard) {
+        function renderLeaderboard(data) {
             const list = document.getElementById('leaderboardList');
-            const sorted = Object.entries(leaderboard)
-                .sort((a, b) => b[1] - a[1])
+            if (!data) data = {};
+            const sorted = Object.values(data)
+                .sort((a, b) => b.count - a.count)
                 .slice(0, 10);
 
             if (sorted.length === 0) {
@@ -1033,59 +1141,28 @@
                 return;
             }
 
-            list.innerHTML = sorted.map(([name, count], i) =>
-                `<div class="leaderboard-row"><span>#${i + 1} ${name}</span><span>${count} карт</span></div>`
+            list.innerHTML = sorted.map((entry, i) =>
+                `<div class="leaderboard-row"><span>#${i + 1} ${entry.name}</span><span>${entry.count} карт</span></div>`
             ).join('');
         }
 
-        async function loadLeaderboard() {
-            if (!LEADERBOARD_ENABLED) {
-                setLeaderboardStatus('Лидерборд не настроен: добавь GITHUB_TOKEN и GIST_ID в коде.');
-                return;
-            }
-            try {
-                const leaderboard = await fetchLeaderboard();
-                await renderLeaderboard(leaderboard);
-                setLeaderboardStatus('Обновлено только что.');
-            } catch (e) {
-                console.error(e);
-                setLeaderboardStatus('Не удалось загрузить лидерборд.');
-            }
-        }
-
-        async function submitScore() {
-            if (!LEADERBOARD_ENABLED || !playerName) return;
-            try {
-                const leaderboard = await fetchLeaderboard();
-                if (!leaderboard[playerName] || leaderboard[playerName] < totalOpened) {
-                    leaderboard[playerName] = totalOpened;
-                }
-                await fetch(`https://api.github.com/gists/${GIST_ID}`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        files: {
-                            [LEADERBOARD_FILE]: {
-                                content: JSON.stringify(leaderboard, null, 2)
-                            }
-                        }
-                    })
-                });
-                await renderLeaderboard(leaderboard);
-                setLeaderboardStatus('Обновлено только что.');
-            } catch (e) {
-                console.error(e);
-                setLeaderboardStatus('Не удалось обновить лидерборд.');
-            }
+        function subscribeToLeaderboard() {
+            database.ref('cardGameLeaderboard').on('value', (snapshot) => {
+                renderLeaderboard(snapshot.val());
+                setLeaderboardStatus('Обновляется автоматически.');
+            }, (err) => {
+                console.error(err);
+                setLeaderboardStatus('Не удалось подключиться к лидерборду. Проверьте firebaseConfig.');
+            });
         }
 
         // Ініціалізація
         initCollection();
         document.getElementById('playerNameInput').value = playerName;
-        loadLeaderboard();
+        subscribeToLeaderboard();
+        if (playerName) {
+            pushScoreToLeaderboard();
+        }
     </script>
 </body>
 </html>
