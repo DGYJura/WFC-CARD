@@ -35,9 +35,11 @@
             gap: 15px;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        /* === Однаковий розмір для балансу і кнопки магазину === */
+        /* === Однаковий розмір для балансу і кнопок === */
         .top-pill {
             background: #ffffff;
             color: #9f1239;
@@ -58,33 +60,51 @@
             /* успадковує .top-pill */
         }
 
-        .btn-shop-open {
+        .btn-shop-open, .btn-casino-open {
             cursor: pointer;
             text-transform: uppercase;
             transition: transform 0.2s, background 0.2s;
         }
 
-        .btn-shop-open:hover {
+        .btn-shop-open:hover, .btn-casino-open:hover {
             background: #fee2e2;
             transform: translateY(-2px);
         }
 
+        /* === Компактний, охайний блок шансів === */
+        .chances-wrapper {
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 22px;
+        }
+
+        .chances-title {
+            color: #94a3b8;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
         .chances-list {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-            font-size: 13px;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            width: 100%;
         }
 
         .chance-item {
-            padding: 6px 12px;
+            padding: 6px 2px;
             border-radius: 6px;
-            font-weight: bold;
+            font-weight: 800;
             background: #152238;
             color: #ffffff;
             border: 1px solid #2e4057;
+            font-size: 10.5px;
+            text-align: center;
+            line-height: 1.4;
         }
 
         .pack-section {
@@ -199,6 +219,21 @@
             font-weight: 600;
         }
 
+        /* === NEW бейдж при першому здобутті картки === */
+        .card-new-badge {
+            color: #dc2626;
+            font-weight: 900;
+            font-size: 13px;
+            margin-top: 6px;
+            letter-spacing: 1px;
+            animation: newPulse 0.9s ease-in-out infinite alternate;
+        }
+
+        @keyframes newPulse {
+            from { opacity: 1; }
+            to { opacity: 0.45; }
+        }
+
         .btn-open, .btn-upgrade {
             background: #9f1239;
             color: #ffffff;
@@ -237,6 +272,7 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            padding: 20px;
         }
 
         .modal-overlay.active { display: flex; }
@@ -530,6 +566,162 @@
             color: #94a3b8;
             margin-top: 8px;
         }
+
+        /* === КАЗИНО === */
+        .casino-modal {
+            max-width: 480px;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        .casino-timer {
+            text-align: center;
+            font-weight: 800;
+            font-size: 14px;
+            color: #0f172a;
+            margin-bottom: 12px;
+            background: #f1f5f9;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .casino-result-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .casino-result {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 900;
+            color: #ffffff;
+            background: #334155;
+            border: 3px solid #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .casino-result.red { background: #dc2626; border-color: #991b1b; }
+        .casino-result.black { background: #0f172a; border-color: #000000; }
+        .casino-result.green { background: #16a34a; border-color: #15803d; }
+
+        .casino-status {
+            font-size: 13px;
+            font-weight: 700;
+            color: #475569;
+            text-align: center;
+        }
+
+        .casino-numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .casino-num-btn {
+            padding: 8px 0;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #ffffff;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .casino-num-btn:hover { transform: scale(1.08); }
+        .casino-num-btn.red { background: #dc2626; }
+        .casino-num-btn.black { background: #0f172a; }
+        .casino-num-btn.green { background: #16a34a; }
+        .casino-num-btn.selected { border-color: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+
+        .casino-color-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .casino-color-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 13px;
+            color: #ffffff;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .casino-color-btn.red { background: #dc2626; }
+        .casino-color-btn.black { background: #0f172a; }
+        .casino-color-btn.selected { border-color: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+
+        .casino-bet-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .casino-selected {
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+            text-align: center;
+        }
+
+        .casino-bet-controls input {
+            padding: 10px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .casino-bets-list {
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 14px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .casino-bet-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .casino-history-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .casino-history-chip {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .casino-history-chip.red { background: #dc2626; }
+        .casino-history-chip.black { background: #0f172a; }
+        .casino-history-chip.green { background: #16a34a; }
     </style>
 </head>
 <body>
@@ -541,9 +733,13 @@
             Баланс: <span id="coinsCount">0</span>&nbsp;WFC
         </div>
         <button class="top-pill btn-shop-open" onclick="toggleShop(true)">Магазин</button>
+        <button class="top-pill btn-casino-open" onclick="toggleCasino(true)">Казино</button>
     </div>
 
-    <div class="chances-list" id="chancesDisplay"></div>
+    <div class="chances-wrapper">
+        <div class="chances-title">Шансы выпадения</div>
+        <div class="chances-list" id="chancesDisplay"></div>
+    </div>
 
     <div class="pack-section">
         <div class="card-container">
@@ -554,6 +750,7 @@
                     <div class="card-name" id="cardName">-</div>
                     <div class="card-rarity" id="cardRarity">-</div>
                     <div class="card-club" id="cardClub">-</div>
+                    <div class="card-new-badge" id="cardNewBadge" style="display:none;">NEW!</div>
                 </div>
             </div>
         </div>
@@ -600,6 +797,43 @@
         </div>
     </div>
 
+    <!-- === КАЗИНО: РУЛЕТКА === -->
+    <div class="modal-overlay" id="casinoModal">
+        <div class="shop-modal casino-modal">
+            <div class="shop-modal-header">
+                <h2>Казино: Рулетка</h2>
+                <button class="btn-close-modal" onclick="toggleCasino(false)">&times;</button>
+            </div>
+
+            <div class="casino-timer" id="casinoTimer">Раунд закончится через: 30с</div>
+
+            <div class="casino-result-wrapper">
+                <div class="casino-result" id="casinoResultNumber">-</div>
+                <div class="casino-status" id="casinoStatus">Делай ставки, пока идёт раунд!</div>
+            </div>
+
+            <div class="casino-numbers-grid" id="casinoNumbersGrid"></div>
+
+            <div class="casino-color-buttons">
+                <button class="casino-color-btn red" onclick="selectColor('red')">Красное (x2)</button>
+                <button class="casino-color-btn black" onclick="selectColor('black')">Чёрное (x2)</button>
+            </div>
+
+            <div class="casino-bet-controls">
+                <div class="casino-selected" id="casinoSelected">Выбери число или цвет</div>
+                <input type="number" id="casinoBetAmount" min="1" placeholder="Сумма ставки в WFC">
+                <button class="btn-upgrade" onclick="placeCasinoBet()">Поставить</button>
+            </div>
+
+            <div class="casino-bets-list" id="casinoBetsList"></div>
+
+            <div class="casino-history">
+                <div class="upgrade-title" style="margin-bottom:6px;">История:</div>
+                <div id="casinoHistoryList" class="casino-history-list"></div>
+            </div>
+        </div>
+    </div>
+
     <div class="collection-section">
         <div class="collection-header">
             <h2>Твоя Коллекция</h2>
@@ -642,8 +876,30 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // ВСТАВТЕ СЮДИ ТОЙ ЖЕ FIREBASE CONFIG, ЩО В index.html / admin.html
-        // (щоб лідерборд, таблиця команд і картки жили в одній базі)
+        /* ==========================================================
+           ВАЖЛИВО ПРО ЛІДЕРБОРД (чому "нічого не відбувалось")
+           ==========================================================
+           1) Нижче стоять ЗАГЛУШКИ (YOUR_API_KEY і т.д.). Поки їх не
+              замінити на реальні дані свого проєкту з Firebase
+              Console -> Project settings -> General -> Your apps,
+              жоден запис не піде — раніше помилка просто гасла в
+              консолі, тепер вона видима в блоці статусу під списком.
+           2) Навіть з правильним конфігом запис може впасти з
+              помилкою "permission_denied", якщо у Realtime Database
+              стоять правила за замовчуванням (заборона запису).
+              Зайди в Firebase Console -> Realtime Database -> Rules
+              і встанови, наприклад:
+              {
+                "rules": {
+                  "cardGameLeaderboard": {
+                    ".read": true,
+                    ".write": true
+                  }
+                }
+              }
+              (це відкриті правила, підходить лише для пет-проєкту
+              без реальних грошей/особистих даних користувачів)
+           ========================================================== */
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
             authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -656,9 +912,13 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        const FIREBASE_CONFIGURED =
+            firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+            firebaseConfig.databaseURL &&
+            !firebaseConfig.databaseURL.includes("YOUR_PROJECT");
+
         // ===== Картки та клуби =====
         const cardsData = [
-            // Клуб Busrid (основний склад)
             { name: "Henedi", rarity: "COMMON", club: "Busrid" },
             { name: "DGYJura", rarity: "RARE", club: "Busrid" },
             { name: "Zeta", rarity: "RARE", club: "Busrid" },
@@ -672,25 +932,19 @@
             { name: "Zeta Prime", rarity: "LEGENDARY", club: "Busrid", image: "Zeta_Prime.png" },
             { name: "Dundik Prime", rarity: "MYTHIC", club: "Busrid", image: "dundik_prime.png" },
             { name: "Опера Prime", rarity: "MYTHIC", club: "Busrid", image: "opera_prime.png" },
-
-            // Клуб Phantom Reapers
             { name: "Dibala", rarity: "EPIC", club: "Phantom Reapers" },
             { name: "MrCourto1s", rarity: "RARE", club: "Phantom Reapers" },
             { name: "IceWing", rarity: "COMMON", club: "Phantom Reapers" },
-
-            // Клуб Mirandes
             { name: "ded.nisa1de", rarity: "EPIC", club: "Mirandes" },
             { name: "anc.robertik", rarity: "RARE", club: "Mirandes" },
-
-            // Клуб Astralis
             { name: "Прайм Туріст", rarity: "EPIC", club: "Astralis" },
-
-            // Клуб Virtus Pro
             { name: "Canqt", rarity: "LEGENDARY", club: "Virtus Pro", image: "https://via.placeholder.com/100/d97706/ffffff?text=Canqt" },
-
-            // Клуб Bristol Rovers
             { name: "Norwly", rarity: "LEGENDARY", club: "Bristol Rovers", image: "https://via.placeholder.com/100/d97706/ffffff?text=Norwly" }
         ];
+
+        // === Сортування колекції: спочатку всі COMMON, потім RARE, EPIC, LEGENDARY, MYTHIC ===
+        const RARITY_ORDER = { COMMON: 0, RARE: 1, EPIC: 2, LEGENDARY: 3, MYTHIC: 4 };
+        cardsData.sort((a, b) => RARITY_ORDER[a.rarity] - RARITY_ORDER[b.rarity]);
 
         // Нагороди за рідкість
         const rarityRewards = {
@@ -765,11 +1019,11 @@
             const chances = getChances();
             const chancesDiv = document.getElementById('chancesDisplay');
             chancesDiv.innerHTML = `
-                <div class="chance-item COMMON">COMMON: ${chances.COMMON.toFixed(1)}%</div>
-                <div class="chance-item RARE">RARE: ${chances.RARE.toFixed(1)}%</div>
-                <div class="chance-item EPIC">EPIC: ${chances.EPIC.toFixed(1)}%</div>
-                <div class="chance-item LEGENDARY">LEGENDARY: ${chances.LEGENDARY.toFixed(1)}%</div>
-                <div class="chance-item MYTHIC">MYTHIC: ${chances.MYTHIC.toFixed(1)}%</div>
+                <div class="chance-item COMMON">COMMON<br>${chances.COMMON.toFixed(1)}%</div>
+                <div class="chance-item RARE">RARE<br>${chances.RARE.toFixed(1)}%</div>
+                <div class="chance-item EPIC">EPIC<br>${chances.EPIC.toFixed(1)}%</div>
+                <div class="chance-item LEGENDARY">LEGEND.<br>${chances.LEGENDARY.toFixed(1)}%</div>
+                <div class="chance-item MYTHIC">MYTHIC<br>${chances.MYTHIC.toFixed(1)}%</div>
             `;
         }
 
@@ -816,7 +1070,6 @@
                 btnCoinMult.disabled = coins < 100;
             }
 
-            // Спонсорський апгрейд: Мусор Дроп (лише 1 рівень)
             const btnJunk = document.getElementById('btnUpgradeJunk');
             const descJunk = document.getElementById('junkUpgradeDesc');
             if (hasJunkDrop) {
@@ -866,7 +1119,6 @@
             }
         }
 
-        // Купівля спонсорського апгрейду — лише один раз, без рівнів
         function buyJunkDrop() {
             if (!hasJunkDrop && coins >= JUNK_DROP_PRICE) {
                 coins -= JUNK_DROP_PRICE;
@@ -885,7 +1137,6 @@
             document.getElementById('progressBar').style.width = `${percentage}%`;
         }
 
-        // Оновлює написи "+X WFC" під кожною карткою (враховує множник монет)
         function updateRewardsUI() {
             const multiplier = hasCoinMult ? 2 : 1;
             cardsData.forEach(card => {
@@ -897,7 +1148,7 @@
             });
         }
 
-        // ===== Пагінація колекції =====
+        // ===== Пагінація колекції (вже відсортована по рідкості) =====
         function getTotalPages() {
             return Math.ceil(cardsData.length / CARDS_PER_PAGE) || 1;
         }
@@ -973,6 +1224,7 @@
             const cardRarity = document.getElementById('cardRarity');
             const cardClub = document.getElementById('cardClub');
             const cardImg = document.getElementById('cardImage');
+            const cardNewBadge = document.getElementById('cardNewBadge');
 
             btn.disabled = true;
 
@@ -997,10 +1249,13 @@
                 const availableCards = cardsData.filter(c => c.rarity === rolledRarity);
                 const droppedCard = availableCards[Math.floor(Math.random() * availableCards.length)];
 
+                const isNewCard = collection[droppedCard.name] === 0;
+
                 cardFront.className = `card-front ${droppedCard.rarity}`;
                 cardName.innerText = droppedCard.name;
                 cardRarity.innerText = droppedCard.rarity;
                 cardClub.innerText = "Клуб: " + droppedCard.club;
+                cardNewBadge.style.display = isNewCard ? 'block' : 'none';
 
                 if (droppedCard.image) {
                     cardImg.src = droppedCard.image;
@@ -1047,7 +1302,6 @@
             }, 1000);
         }
 
-        // Оновлює клітинку колекції, лише якщо вона зараз відображена на поточній сторінці
         function updateCollectionUI(name) {
             const colItem = document.getElementById(`col-${name}`);
             const countLabel = document.getElementById(`count-${name}`);
@@ -1077,7 +1331,6 @@
             }
         }
 
-        // Пасивний дохід від "Мусор Дроп": +1 WFC кожні 10 сек, поки відкрита сторінка
         setInterval(() => {
             if (hasJunkDrop) {
                 coins += 1;
@@ -1087,15 +1340,7 @@
         }, 10000);
 
         /* ==========================================================
-           ЛІДЕРБОРД ЧЕРЕЗ FIREBASE (без токенів і посилань)
-           ==========================================================
-           Результати зберігаються у вузлі 'cardGameLeaderboard' тієї ж
-           бази Firebase, що і таблиця команд. Кожен клієнт підписаний
-           на .on('value', ...) — тому щойно хтось відкриває пак, це
-           одразу видно всім, хто відкрив сторінку, без перезавантаження.
-
-           Firebase Realtime Database не дозволяє символи . # $ [ ] у
-           ключах, тому нікнейм санітизується перед записом.
+           ЛІДЕРБОРД ЧЕРЕЗ FIREBASE
            ========================================================== */
 
         function sanitizeKey(name) {
@@ -1110,22 +1355,38 @@
         function changePlayerName() {
             const input = document.getElementById('playerNameInput');
             const name = input.value.trim();
-            if (!name) return;
+            if (!name) {
+                setLeaderboardStatus('Введи ник в поле выше.');
+                return;
+            }
             playerName = name;
             localStorage.setItem('wfc_player_name', playerName);
             pushScoreToLeaderboard();
         }
 
         function pushScoreToLeaderboard() {
-            if (!playerName) return;
+            if (!FIREBASE_CONFIGURED) {
+                setLeaderboardStatus('⚠ Лидерборд не настроен: впиши свой firebaseConfig в коде (см. комментарий вверху script).');
+                return;
+            }
+            if (!playerName) {
+                setLeaderboardStatus('Введи ник и нажми "Сохранить ник".');
+                return;
+            }
             const key = sanitizeKey(playerName);
-            if (!key) return;
+            if (!key) {
+                setLeaderboardStatus('Некорректный ник.');
+                return;
+            }
+            setLeaderboardStatus('Сохраняю...');
             database.ref('cardGameLeaderboard/' + key).set({
                 name: playerName,
                 count: totalOpened
+            }).then(() => {
+                setLeaderboardStatus('Ник сохранён, результат отправлен!');
             }).catch(err => {
                 console.error(err);
-                setLeaderboardStatus('Не вдалося оновити лідерборд.');
+                setLeaderboardStatus('Ошибка записи: ' + err.message + ' (проверь Rules в Firebase Console).');
             });
         }
 
@@ -1147,14 +1408,212 @@
         }
 
         function subscribeToLeaderboard() {
+            if (!FIREBASE_CONFIGURED) {
+                setLeaderboardStatus('⚠ Лидерборд не настроен: впиши свой firebaseConfig в коде.');
+                return;
+            }
             database.ref('cardGameLeaderboard').on('value', (snapshot) => {
                 renderLeaderboard(snapshot.val());
                 setLeaderboardStatus('Обновляется автоматически.');
             }, (err) => {
                 console.error(err);
-                setLeaderboardStatus('Не удалось подключиться к лидерборду. Проверьте firebaseConfig.');
+                setLeaderboardStatus('Не удалось подключиться: ' + err.message + ' (проверь Rules в Firebase Console).');
             });
         }
+
+        /* ==========================================================
+           КАЗИНО: РУЛЕТКА З ЖИВИМ ТАЙМЕРОМ
+           ==========================================================
+           Числа 1–30: непарні — червоні, парні — чорні. 0 — зелений.
+           Ставка на число (1–30): x3. Ставка на 0: x4.
+           Ставка на колір (червоне/чорне): x2.
+           Раунд триває 30 секунд, потім автоматично крутиться і
+           виводиться випадкове число.
+           ========================================================== */
+
+        const CASINO_ROUND_SECONDS = 30;
+        let casinoTimeLeft = CASINO_ROUND_SECONDS;
+        let casinoBets = [];
+        let casinoHistory = [];
+        let casinoSpinning = false;
+        let selectedBetType = null;
+        let selectedBetValue = null;
+
+        function toggleCasino(show) {
+            const modal = document.getElementById('casinoModal');
+            if (show) {
+                modal.classList.add('active');
+            } else {
+                modal.classList.remove('active');
+            }
+        }
+
+        function getNumberColor(n) {
+            if (n === 0) return 'green';
+            return n % 2 === 1 ? 'red' : 'black';
+        }
+
+        function initCasinoGrid() {
+            const grid = document.getElementById('casinoNumbersGrid');
+            grid.innerHTML = '';
+            for (let n = 0; n <= 30; n++) {
+                const btn = document.createElement('div');
+                btn.className = `casino-num-btn ${getNumberColor(n)}`;
+                btn.id = `casino-num-${n}`;
+                btn.innerText = n;
+                btn.onclick = () => selectNumber(n);
+                grid.appendChild(btn);
+            }
+        }
+
+        function clearCasinoSelection() {
+            document.querySelectorAll('.casino-num-btn.selected').forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll('.casino-color-btn.selected').forEach(el => el.classList.remove('selected'));
+        }
+
+        function selectNumber(n) {
+            clearCasinoSelection();
+            selectedBetType = (n === 0) ? 'zero' : 'number';
+            selectedBetValue = n;
+            const el = document.getElementById(`casino-num-${n}`);
+            if (el) el.classList.add('selected');
+            document.getElementById('casinoSelected').innerText =
+                n === 0 ? 'Выбрано: 0 (x4)' : `Выбрано число: ${n} (x3)`;
+        }
+
+        function selectColor(color) {
+            clearCasinoSelection();
+            selectedBetType = 'color';
+            selectedBetValue = color;
+            document.querySelectorAll(`.casino-color-btn.${color}`).forEach(el => el.classList.add('selected'));
+            document.getElementById('casinoSelected').innerText =
+                `Выбрано: ${color === 'red' ? 'Красное' : 'Чёрное'} (x2)`;
+        }
+
+        function placeCasinoBet() {
+            if (casinoSpinning) {
+                alert('Дождись окончания текущего розыгрыша.');
+                return;
+            }
+            if (!selectedBetType) {
+                alert('Сначала выбери число или цвет.');
+                return;
+            }
+            const amountInput = document.getElementById('casinoBetAmount');
+            const amount = parseInt(amountInput.value);
+            if (!amount || amount <= 0) {
+                alert('Укажи сумму ставки.');
+                return;
+            }
+            if (amount > coins) {
+                alert('Недостаточно WFC.');
+                return;
+            }
+
+            coins -= amount;
+            casinoBets.push({ type: selectedBetType, value: selectedBetValue, amount });
+            saveData();
+            updateUI();
+            renderCasinoBets();
+            amountInput.value = '';
+        }
+
+        function renderCasinoBets() {
+            const list = document.getElementById('casinoBetsList');
+            if (casinoBets.length === 0) {
+                list.innerHTML = '<div class="casino-bet-row"><span>Ставок пока нет</span><span></span></div>';
+                return;
+            }
+            list.innerHTML = casinoBets.map(bet => {
+                let label = '';
+                if (bet.type === 'number') label = `Число ${bet.value}`;
+                else if (bet.type === 'zero') label = 'Число 0';
+                else label = bet.value === 'red' ? 'Красное' : 'Чёрное';
+                return `<div class="casino-bet-row"><span>${label}</span><span>${bet.amount} WFC</span></div>`;
+            }).join('');
+        }
+
+        function renderCasinoHistory() {
+            const list = document.getElementById('casinoHistoryList');
+            list.innerHTML = casinoHistory.map(h =>
+                `<div class="casino-history-chip ${h.color}">${h.number}</div>`
+            ).join('');
+        }
+
+        function updateCasinoTimerUI() {
+            const timerEl = document.getElementById('casinoTimer');
+            if (timerEl) {
+                timerEl.innerText = `Раунд закончится через: ${casinoTimeLeft}с`;
+            }
+        }
+
+        function casinoTick() {
+            if (casinoSpinning) return;
+            casinoTimeLeft--;
+            if (casinoTimeLeft <= 0) {
+                spinCasino();
+            } else {
+                updateCasinoTimerUI();
+            }
+        }
+
+        function spinCasino() {
+            casinoSpinning = true;
+            const statusEl = document.getElementById('casinoStatus');
+            const resultEl = document.getElementById('casinoResultNumber');
+            statusEl.innerText = 'Крутится...';
+
+            let ticks = 0;
+            const spinAnim = setInterval(() => {
+                const randomDisplay = Math.floor(Math.random() * 31);
+                resultEl.innerText = randomDisplay;
+                resultEl.className = 'casino-result ' + getNumberColor(randomDisplay);
+                ticks++;
+                if (ticks >= 15) {
+                    clearInterval(spinAnim);
+                    finishCasinoSpin();
+                }
+            }, 100);
+        }
+
+        function finishCasinoSpin() {
+            const winningNumber = Math.floor(Math.random() * 31);
+            const winningColor = getNumberColor(winningNumber);
+
+            const resultEl = document.getElementById('casinoResultNumber');
+            resultEl.innerText = winningNumber;
+            resultEl.className = 'casino-result ' + winningColor;
+
+            let totalWin = 0;
+            casinoBets.forEach(bet => {
+                if (bet.type === 'number' && bet.value === winningNumber) {
+                    totalWin += bet.amount * 3;
+                } else if (bet.type === 'zero' && winningNumber === 0) {
+                    totalWin += bet.amount * 4;
+                } else if (bet.type === 'color' && bet.value === winningColor) {
+                    totalWin += bet.amount * 2;
+                }
+            });
+
+            coins += totalWin;
+            casinoHistory.unshift({ number: winningNumber, color: winningColor });
+            if (casinoHistory.length > 12) casinoHistory.pop();
+            casinoBets = [];
+
+            saveData();
+            updateUI();
+            renderCasinoBets();
+            renderCasinoHistory();
+
+            document.getElementById('casinoStatus').innerText =
+                totalWin > 0 ? `Выигрыш: +${totalWin} WFC!` : 'Ставки не сыграли. Новый раунд!';
+
+            casinoTimeLeft = CASINO_ROUND_SECONDS;
+            casinoSpinning = false;
+            updateCasinoTimerUI();
+        }
+
+        setInterval(casinoTick, 1000);
 
         // Ініціалізація
         initCollection();
@@ -1163,6 +1622,11 @@
         if (playerName) {
             pushScoreToLeaderboard();
         }
+
+        initCasinoGrid();
+        renderCasinoBets();
+        renderCasinoHistory();
+        updateCasinoTimerUI();
     </script>
 </body>
 </html>
